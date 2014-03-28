@@ -80,7 +80,7 @@ apply_chain(state, Jeps, b);
 apply_ising_allvsall(staterev, Jint.getValue());
 //Symmetry Breaking
 
-apply_chain(state, Jeps, bpert);
+apply_chain(staterev, Jeps, bpert);
 
 }
  
