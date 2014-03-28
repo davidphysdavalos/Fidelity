@@ -39,5 +39,5 @@ FidelityAllvsAll_Special :: FidelityAllvsAll_Special.cpp makefile
 FidelityAllvsAll_Special_second :: FidelityAllvsAll_Special_second.cpp makefile
 	g++ FidelityAllvsAll_Special_second.cpp -o FidelityAllvsAll_Special_second -I $(INCLUDE) -litpp
 	
-FidelityAllvsAll_Special_BrokenPermutations :: FidelityAllvsAll_Special_BrokenPermutations.cpp makefile
-	g++ FidelityAllvsAll_Special_BrokenPermutations.cpp -o FidelityAllvsAll_Special_BrokenPermutations -I $(INCLUDE) -litpp
+FidelityAllvsAll_BrokenPermutations :: FidelityAllvsAll_BrokenPermutations.cpp makefile
+	g++ FidelityAllvsAll_BrokenPermutations.cpp -o FidelityAllvsAll_BrokenPermutations -I $(INCLUDE) -litpp
