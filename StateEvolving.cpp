@@ -26,19 +26,6 @@ TCLAP::ValueArg<double> theta("","theta", "polar angle",false, 1.0,"double",cmd)
 TCLAP::ValueArg<double> phi("","phi", "azimultal angle",false, 1.0,"double",cmd);
 TCLAP::ValueArg<int> steps("","steps","steps",false, 100,"int",cmd);
 
-cvec TensorPow(cvec state, int qub){
-
-cvec newstate;
-
-newstate=state;
-
-for(int i=0;i<qub-1;i++){
-newstate=TensorProduct(newstate,state);
-}
-return newstate;
-
-}
-
 int main(int argc, char* argv[])
 {
 
@@ -63,6 +50,7 @@ apply_chain(state, J.getValue(), b);
 
 }
 
-cout << state <<endl;
+for(int i=0; i<state.size();i++)
+	cout << real(state(i)) << imag(state(i)) <<endl;
 
 }
