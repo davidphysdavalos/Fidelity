@@ -80,6 +80,9 @@ if(option=="normalito")
 	
 if(option=="randU")
 	state=RandomCUE(pow(2, qubits.getValue()))*TensorPow(qustate,qubits.getValue());
+	
+if(option=="klimov")
+	state=TensorProduct(TensorProduct(TensorPow(qustate,3),sigma(1)*qustate),TensorPow(qustate,qubits.getValue()-4));
 
 //cout<< qustate ;
 
@@ -115,6 +118,8 @@ apply_chain(staterev, Jrev, bpert);
 //cout << staterev;
 
 cout<< sum_positive_derivatives(list)<< endl;
+
+//cout<<state<<endl;
 
 
 }
