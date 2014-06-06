@@ -19,6 +19,7 @@ using namespace RMT;
 
 TCLAP::CmdLine cmd("Command description message", ' ', "0.1");
 TCLAP::ValueArg<string> optionArg("o","option", "Option" ,false,"normalito", "string",cmd);
+TCLAP::ValueArg<string> optionArg2("","option2", "Option2" ,false,"fidelity", "string",cmd);
 TCLAP::ValueArg<unsigned int> seed("s","seed", "Random seed [0 for urandom]",false, 243243,"unsigned int",cmd);
 TCLAP::ValueArg<int> qubits("q","qubits", "number of qubits",false, 4,"int",cmd);
 TCLAP::ValueArg<double> J("J","ising_coupling", "Ising interaction in the z-direction",false, 1.0,"double",cmd);
@@ -55,6 +56,7 @@ b(2)=bz.getValue();
 bpert=b;
 bpert(0)=b(0)+deltabx.getValue();
 string option=optionArg.getValue();
+string option2=optionArg2.getValue();
 
 cvec state, staterev, qustate;
 
@@ -93,6 +95,9 @@ staterev=state;
 
 double Jrev=J.getValue()+Jpert.getValue();
 
+
+if(option2=="fidelity"){
+
 vec list(steps.getValue());
 
 for(int i=0;i<steps.getValue();i++){
@@ -121,8 +126,24 @@ apply_chain(staterev, Jrev, bpert);
 //cout << staterev;
 
 cout<< sum_positive_derivatives(list)<< endl;
-
+}
 //cout<<state<<endl;
+if(option2=="correlacion"){
+	
+cvec list(steps.getValue());
 
+cvec init=state;
+
+for(int i=0;i<steps.getValue();i++){
+
+list(i)=dot(conj(init),state);
+
+cout << real(list(i)) << " " << imag(list(i)) <<endl;
+
+//cout << list <<endl;
+
+apply_chain(state, J.getValue(), b);
+}
+}
 
 }
