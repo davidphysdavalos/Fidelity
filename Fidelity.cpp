@@ -145,5 +145,44 @@ cout << real(list(i)) << " " << imag(list(i)) <<endl;
 apply_chain(state, J.getValue(), b);
 }
 }
+if(option2=="fidelityandipr"){
+
+vec listfidel(steps.getValue());
+
+cvec listcorr(steps.getValue());
+
+cvec init=state;
+
+for(int i=0;i<steps.getValue();i++){
+
+listfidel(i)=pow( abs( dot( conj(staterev),state)),2);
+
+listcorr(i)=pow(abs(dot(conj(init),state)),2);
+
+//cout<< pow( abs( dot( conj(staterev),state)),2) <<endl;
+
+cout << listfidel(i) <<endl;
+// cout<< i<< " " << list(i) <<endl;
+
+listfidel(i)=sqrt(listfidel(i));
+
+apply_chain(state, J.getValue(), b);
+
+apply_chain(staterev, Jrev, bpert); 
+
+//cout<<abs(dot(conj(staterev),state))<<endl;
+
+//fidelity<<pow(abs(dot(conj(staterev),state)),2)<<endl;
+
+}
+ 
+//fidelity.close();
+
+//cout << staterev;
+
+cout<< sum_positive_derivatives(listfidel)<< endl;
+
+cout<< real(mean(listcorr))<< endl;
+}
 
 }
