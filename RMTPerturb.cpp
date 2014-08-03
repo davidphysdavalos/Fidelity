@@ -31,10 +31,11 @@ TCLAP::ValueArg<double> phi("","phi", "azimultal angle",false, 1.0,"double",cmd)
 TCLAP::ValueArg<double> deltabx("","deltabx", "perturbation",false, 0.1,"double",cmd);
 TCLAP::ValueArg<int> steps("","steps","steps",false, 100,"int",cmd);
 TCLAP::ValueArg<double> Jpert("","Jpert","Perturbation on Ising",false, 0.0,"double",cmd);
-TCLAP::ValueArg<int> address("A","address","Direccion del qubit para el Ising term",false, 0,"int",cmd);
+TCLAP::ValueArg<int> i("i","addressi","Direccion del qubit para el Ising term i",false, 1,"int",cmd);
+TCLAP::ValueArg<int> j("j","addressj","Direccion del qubit para el Ising term j",false, 2,"int",cmd);
 
 
-cmat Isingterm(int i,int N){
+cmat Isingterm2(int i,int N){
 
 //cmat term=zeros_c(pow(2,N),pow(2,N));
 
@@ -61,25 +62,85 @@ cmat term;
         
 }
 
+cmat Isingterm(int i,int j,int N){
+	
+cmat lista[N];
+
+for(int h=0;h < N;h++){
+	
+	if(h==i || h==j){
+	 lista[h]=sigma(3);
+ }
+ else{
+	 lista[h]=eye_c(2);
+	 }
+ 
+ }
+
+cmat termino=kron(lista[0],lista[1]);
+
+for(int h=2;h<N;h++) termino=kron(termino,lista[h]);
+
+return termino;
+
+}
+
+cmat sigmaddress(int i,int qubit,int N){
+	
+	cmat lista[N];
+	
+	for(int h=0;h < N;h++){
+	
+	if(h==qubit){
+	 lista[h]=sigma(i);
+ }
+ else{
+	 lista[h]=eye_c(2);
+	 }
+	 
+ }
+	 
+cmat termino=kron(lista[0],lista[1]);
+
+for(int h=2;h<N;h++) termino=kron(termino,lista[h]);
+
+return termino;
+
+}
+
+cmat HamiltonianChainU(double J, cvec b(3), int qubits){
+	
+	cmat HI=zeros_c(pow(2,qubits),pow(2,qubits));
+	
+	HK=HI;
+	
+	for(int i=0; i<qubits-1; i++){
+		
+		HI=Isingterm(i,i+1,qubits)+HI;
+		}
+		
+		HI=J*HI+J*Isingterm(qubits-1,0,qubits);
+		
+	for(int i=0;i<qubits;i++){
+		HK=b(1)*sigmaddress(1,i,qubits)+b(3)*sigmaddress(2,i,qubits)+HK;
+	}
+	
+	
+	
+}
+
 int main(int argc, char* argv[])
 {
 
 cmd.parse( argc, argv );
 cout.precision(12);
 
-//cout<< Isingterm(address.getValue(),qubits.getValue()) <<endl;
 
-cmat lista[10];
+//cout<< Isingterm(i.getValue(),j.getValue(),qubits.getValue()) <<endl;
 
-lista[1]=sigma(1);
-lista[2]=sigma(1);
-lista[3]=sigma(1);
-lista[4]=sigma(1);
-lista[5]=sigma(1);
 
-for(int h=1;h<6,h++) TensorProduct(lista[i],lista[i+1])
 
-cout<< lista[1] <<endl;
+
 }
 
 
