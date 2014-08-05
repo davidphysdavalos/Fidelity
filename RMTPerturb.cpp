@@ -1,14 +1,14 @@
 #include <iostream>
-#include <cpp/dev_random.cpp>
+#include "cpp/dev_random.cpp"
 #include <tclap/CmdLine.h>
 #include <itpp/itbase.h>
 //#include <itpp/base/algebra/cholesky.h>
 #include <itpp/stat/histogram.h>
-#include <cpp/itpp_ext_math.cpp>
-#include <cpp/spinchain.cpp>
+#include "cpp/itpp_ext_math.cpp"
+#include "cpp/spinchain.cpp"
 #include <itpp/stat/misc_stat.h>
 #include <fstream>
-#include <cpp/RMT.cpp>
+#include "cpp/RMT.cpp"
 
 using namespace std; 
 using namespace itpp;
@@ -17,22 +17,7 @@ using namespace cfpmath;
 using namespace spinchain;
 using namespace RMT;
 
-TCLAP::CmdLine cmd("No reputas estupidas mames",' ', "0.1");
-TCLAP::ValueArg<string> optionArg("o","option", "Option" ,false,"normalito", "string",cmd);
-TCLAP::ValueArg<string> optionArg2("","option2", "Option2" ,false,"fidelity", "string",cmd);
-TCLAP::ValueArg<unsigned int> seed("s","seed", "Random seed [0 for urandom]",false, 243243,"unsigned int",cmd);
-TCLAP::ValueArg<int> qubits("q","qubits", "number of qubits",false, 4,"int",cmd);
-TCLAP::ValueArg<double> J("J","ising_coupling", "Ising interaction in the z-direction",false, 1.0,"double",cmd);
-TCLAP::ValueArg<double> bx("","bx", "Magnetic field in x direction",false, 1.4,"double",cmd);
-TCLAP::ValueArg<double> by("","by", "Magnetic field in y direction",false, 0.,"double",cmd);
-TCLAP::ValueArg<double> bz("","bz", "Magnetic field in z direction",false, 1.4,"double",cmd);
-TCLAP::ValueArg<double> theta("","theta", "polar angle",false, 1.0,"double",cmd);
-TCLAP::ValueArg<double> phi("","phi", "azimultal angle",false, 1.0,"double",cmd);
-TCLAP::ValueArg<double> deltabx("","deltabx", "perturbation",false, 0.1,"double",cmd);
-TCLAP::ValueArg<int> steps("","steps","steps",false, 100,"int",cmd);
-TCLAP::ValueArg<double> Jpert("","Jpert","Perturbation on Ising",false, 0.0,"double",cmd);
-TCLAP::ValueArg<int> i("i","addressi","Direccion del qubit para el Ising term i",false, 1,"int",cmd);
-TCLAP::ValueArg<int> j("j","addressj","Direccion del qubit para el Ising term j",false, 2,"int",cmd);
+
 
 
 cmat Isingterm2(int i,int N){
@@ -108,39 +93,63 @@ return termino;
 
 }
 
-cmat HamiltonianChainU(double J, cvec b(3), int qubits){
+cmat HamiltonianChainU(double J, vec b, int Nqubits){
 	
-	cmat HI=zeros_c(pow(2,qubits),pow(2,qubits));
+	cmat HI=zeros_c(pow(2,Nqubits),pow(2,Nqubits));
 	
-	HK=HI;
+	cmat HK=HI;
 	
-	for(int i=0; i<qubits-1; i++){
+	for(int i=0; i<Nqubits-1; i++){
 		
-		HI=Isingterm(i,i+1,qubits)+HI;
+		HI=Isingterm(i,i+1,Nqubits)+HI;
 		}
 		
-		HI=J*HI+J*Isingterm(qubits-1,0,qubits);
+		HI=J*HI+J*Isingterm(Nqubits-1,0,Nqubits);
 		
-	for(int i=0;i<qubits;i++){
-		HK=b(1)*sigmaddress(1,i,qubits)+b(3)*sigmaddress(2,i,qubits)+HK;
+	for(int i=0;i<Nqubits;i++){
+		HK=b(0)*sigmaddress(1,i,Nqubits)+b(2)*sigmaddress(3,i,Nqubits)+HK;
 	}
 	
-	
+	return exponentiate_nonsym(-complex <double>(0,1)*HK)*exponentiate_nonsym(-complex <double>(0,1)*HI);
 	
 }
 
 int main(int argc, char* argv[])
 {
 
+
+TCLAP::CmdLine cmd("No reputas estupidas mames",' ', "0.1");
+TCLAP::ValueArg<string> optionArg("o","option", "Option" ,false,"normalito", "string",cmd);
+TCLAP::ValueArg<string> optionArg2("","option2", "Option2" ,false,"fidelity", "string",cmd);
+TCLAP::ValueArg<unsigned int> seed("s","seed", "Random seed [0 for urandom]",false, 243243,"unsigned int",cmd);
+TCLAP::ValueArg<int> qubits("q","qubits", "number of qubits",false, 4,"int",cmd);
+TCLAP::ValueArg<double> J("J","ising_coupling", "Ising interaction in the z-direction",false, 1.0,"double",cmd);
+TCLAP::ValueArg<double> bx("","bx", "Magnetic field in x direction",false, 1.4,"double",cmd);
+TCLAP::ValueArg<double> by("","by", "Magnetic field in y direction",false, 0.,"double",cmd);
+TCLAP::ValueArg<double> bz("","bz", "Magnetic field in z direction",false, 1.4,"double",cmd);
+TCLAP::ValueArg<double> theta("","theta", "polar angle",false, 1.0,"double",cmd);
+TCLAP::ValueArg<double> phi("","phi", "azimultal angle",false, 1.0,"double",cmd);
+TCLAP::ValueArg<double> deltabx("","deltabx", "perturbation",false, 0.1,"double",cmd);
+TCLAP::ValueArg<int> steps("","steps","steps",false, 100,"int",cmd);
+TCLAP::ValueArg<double> Jpert("","Jpert","Perturbation on Ising",false, 0.0,"double",cmd);
+TCLAP::ValueArg<int> i("i","addressi","Direccion del qubit para el Ising term i",false, 1,"int",cmd);
+TCLAP::ValueArg<int> j("j","addressj","Direccion del qubit para el Ising term j",false, 2,"int",cmd);
+
 cmd.parse( argc, argv );
 cout.precision(12);
 
+vec b(3);
+b(0)=bx.getValue();
+b(1)=by.getValue();
+b(2)=bz.getValue();
 
-//cout<< Isingterm(i.getValue(),j.getValue(),qubits.getValue()) <<endl;
+//cout<< HamiltonianChainU(J.getValue(), b, qubits.getValue()) <<endl;
 
+cout << HamiltonianChainU(J.getValue(), b, qubits.getValue()) <<endl;
 
+//cout<< Isingterm(i.getValue(),j.getValue(),qubits.getValue())<<endl;
 
-
+return 0;
 }
 
 
