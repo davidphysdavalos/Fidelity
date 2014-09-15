@@ -17,9 +17,6 @@ using namespace cfpmath;
 using namespace spinchain;
 using namespace RMT;
 
-
-
-
 cmat Isingterm2(int i,int N){
 
 //cmat term=zeros_c(pow(2,N),pow(2,N));
@@ -93,7 +90,7 @@ return termino;
 
 }
 
-cmat HamiltonianChainU(double J, vec b, int Nqubits){
+cmat HamiltonianChainU(double J, vec b, int Nqubits, double delta){
 	
 	cmat HI=zeros_c(pow(2,Nqubits),pow(2,Nqubits));
 	
@@ -110,7 +107,7 @@ cmat HamiltonianChainU(double J, vec b, int Nqubits){
 		HK=b(0)*sigmaddress(1,i,Nqubits)+b(2)*sigmaddress(3,i,Nqubits)+HK;
 	}
 	
-	return exponentiate_nonsym(-complex <double>(0,1)*HK)*exponentiate_nonsym(-complex <double>(0,1)*HI);
+	return exponentiate_nonsym(-complex <double>(0,1)*(HK+delta*RandomGUE(pow(2,Nqubits))))*exponentiate_nonsym(-complex <double>(0,1)*HI);
 	
 }
 
@@ -129,23 +126,27 @@ TCLAP::ValueArg<double> by("","by", "Magnetic field in y direction",false, 0.,"d
 TCLAP::ValueArg<double> bz("","bz", "Magnetic field in z direction",false, 1.4,"double",cmd);
 TCLAP::ValueArg<double> theta("","theta", "polar angle",false, 1.0,"double",cmd);
 TCLAP::ValueArg<double> phi("","phi", "azimultal angle",false, 1.0,"double",cmd);
-TCLAP::ValueArg<double> deltabx("","deltabx", "perturbation",false, 0.1,"double",cmd);
+TCLAP::ValueArg<double> deltapert("","deltabx", "perturbation",false, 0.1,"double",cmd);
 TCLAP::ValueArg<int> steps("","steps","steps",false, 100,"int",cmd);
 TCLAP::ValueArg<double> Jpert("","Jpert","Perturbation on Ising",false, 0.0,"double",cmd);
-TCLAP::ValueArg<int> i("i","addressi","Direccion del qubit para el Ising term i",false, 1,"int",cmd);
-TCLAP::ValueArg<int> j("j","addressj","Direccion del qubit para el Ising term j",false, 2,"int",cmd);
+//TCLAP::ValueArg<int> i("i","addressi","Direccion del qubit para el Ising term i",false, 1,"int",cmd);
+//TCLAP::ValueArg<int> j("j","addressj","Direccion del qubit para el Ising term j",false, 2,"int",cmd);
 
 cmd.parse( argc, argv );
 cout.precision(12);
 
-vec b(3);
-b(0)=bx.getValue();
+vec b(3); 
+b(0)=bx.getValue(); 
 b(1)=by.getValue();
 b(2)=bz.getValue();
 
+cmat U=HamiltonianChainU(J.getValue(),b , qubits.getValue(), deltapert.getValue());
+
+cout<<U<<endl;
+
 //cout<< HamiltonianChainU(J.getValue(), b, qubits.getValue()) <<endl;
 
-cout << HamiltonianChainU(J.getValue(), b, qubits.getValue()) <<endl;
+//cout << HamiltonianChainU(J.getValue(), b, qubits.getValue()) <<endl;
 
 //cout<< Isingterm(i.getValue(),j.getValue(),qubits.getValue())<<endl;
 
