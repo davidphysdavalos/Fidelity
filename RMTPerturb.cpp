@@ -124,9 +124,9 @@ TCLAP::ValueArg<double> J("J","ising_coupling", "Ising interaction in the z-dire
 TCLAP::ValueArg<double> bx("","bx", "Magnetic field in x direction",false, 1.4,"double",cmd);
 TCLAP::ValueArg<double> by("","by", "Magnetic field in y direction",false, 0.,"double",cmd);
 TCLAP::ValueArg<double> bz("","bz", "Magnetic field in z direction",false, 1.4,"double",cmd);
-TCLAP::ValueArg<double> theta("","theta", "polar angle",false, 1.0,"double",cmd);
-TCLAP::ValueArg<double> phi("","phi", "azimultal angle",false, 1.0,"double",cmd);
-TCLAP::ValueArg<double> deltapert("","deltabx", "perturbation",false, 0.1,"double",cmd);
+TCLAP::ValueArg<double> meshtheta("","meshtheta", "polar angle mesh size",false, 0.1,"double",cmd);
+TCLAP::ValueArg<double> meshphi("","meshphi", "azimultal angle mesh size",false, 0.1,"double",cmd);
+TCLAP::ValueArg<double> deltapert("","deltapert", "perturbation on RMT",false, 0.1,"double",cmd);
 TCLAP::ValueArg<int> steps("","steps","steps",false, 100,"int",cmd);
 TCLAP::ValueArg<double> Jpert("","Jpert","Perturbation on Ising",false, 0.0,"double",cmd);
 //TCLAP::ValueArg<int> i("i","addressi","Direccion del qubit para el Ising term i",false, 1,"int",cmd);
@@ -140,9 +140,52 @@ b(0)=bx.getValue();
 b(1)=by.getValue();
 b(2)=bz.getValue();
 
-cmat U=HamiltonianChainU(J.getValue(),b , qubits.getValue(), deltapert.getValue());
+// {{{ Set seed for random
+unsigned int semilla=seed.getValue();
+if (semilla == 0){
+  Random semilla_uran; semilla=semilla_uran.strong();
+} 
+RNG_reset(semilla);
+// }}}
 
-cout<<U<<endl;
+
+cvec state, staterev, qustate;
+
+cmat U=HamiltonianChainU(J.getValue(),b , qubits.getValue(), 0.0);
+
+cmat Udelta=HamiltonianChainU(J.getValue(),b , qubits.getValue(), deltapert.getValue());
+
+double theta=0.0, phi=0.0;
+
+while(theta<3.141592654+meshtheta.getValue()){
+	
+	phi=0.0;
+	
+while(phi<6.283185307+meshphi.getValue()){
+
+qustate=BlochToQubit(theta,phi);
+
+state=TensorPow(qustate,qubits.getValue());
+
+staterev=state;
+
+for(int i=0;i<steps.getValue()+1;i++){
+	
+	cout<<pow( abs( dot( conj(staterev),state)),2)<<endl;
+	//cout<<theta<<" "<<phi<<endl;
+	
+	state=U*state;
+	staterev=Udelta*staterev;
+	
+	}
+	
+	phi=phi+meshphi.getValue();
+}
+
+	theta=theta+meshtheta.getValue();
+}
+
+//cout<<U<<endl;
 
 //cout<< HamiltonianChainU(J.getValue(), b, qubits.getValue()) <<endl;
 
