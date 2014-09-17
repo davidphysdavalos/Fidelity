@@ -157,11 +157,11 @@ cmat Udelta=HamiltonianChainU(J.getValue(),b , qubits.getValue(), deltapert.getV
 
 double theta=0.0, phi=0.0;
 
-while(theta<3.141592654+meshtheta.getValue()){
+while(theta<3.14159+meshtheta.getValue()){
 	
 	phi=0.0;
 	
-while(phi<6.283185307+meshphi.getValue()){
+while(phi<6.28319+meshphi.getValue()){
 
 qustate=BlochToQubit(theta,phi);
 
@@ -175,6 +175,7 @@ for(int i=0;i<steps.getValue()+1;i++){
 	//cout<<theta<<" "<<phi<<endl;
 	
 	state=U*state;
+	//apply_chain(state, J.getValue(), b);
 	staterev=Udelta*staterev;
 	
 	}
