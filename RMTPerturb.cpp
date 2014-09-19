@@ -111,13 +111,34 @@ cmat HamiltonianChainU(double J, vec b, int Nqubits, double delta){
 	
 }
 
+cmat HamiltonianChainUbothSites(double J, vec b, int Nqubits, cmat V){
+	
+	cmat HI=zeros_c(pow(2,Nqubits),pow(2,Nqubits));
+	
+	cmat HK=HI;
+	
+	for(int i=0; i<Nqubits-1; i++){
+		
+		HI=Isingterm(i,i+1,Nqubits)+HI;
+		}
+		
+		HI=J*HI+J*Isingterm(Nqubits-1,0,Nqubits);
+		
+	for(int i=0;i<Nqubits;i++){
+		HK=b(0)*sigmaddress(1,i,Nqubits)+b(2)*sigmaddress(3,i,Nqubits)+HK;
+	}
+	
+	return exponentiate_nonsym(-complex <double>(0,1)*(HK+V))*exponentiate_nonsym(-complex <double>(0,1)*HI);
+	
+}
+
 int main(int argc, char* argv[])
 {
 
 
 TCLAP::CmdLine cmd("No reputas estupidas mames",' ', "0.1");
 TCLAP::ValueArg<string> optionArg("o","option", "Option" ,false,"normalito", "string",cmd);
-TCLAP::ValueArg<string> optionArg2("","option2", "Option2" ,false,"fidelity", "string",cmd);
+TCLAP::ValueArg<string> optionArg2("","option2", "onesite or bothsites Hamiltonian RMT perturbation" ,false,"onesite", "string",cmd);
 TCLAP::ValueArg<unsigned int> seed("s","seed", "Random seed [0 for urandom]",false, 243243,"unsigned int",cmd);
 TCLAP::ValueArg<int> qubits("q","qubits", "number of qubits",false, 4,"int",cmd);
 TCLAP::ValueArg<double> J("J","ising_coupling", "Ising interaction in the z-direction",false, 1.0,"double",cmd);
@@ -151,9 +172,25 @@ RNG_reset(semilla);
 
 cvec state, staterev, qustate;
 
-cmat U=HamiltonianChainU(J.getValue(),b , qubits.getValue(), 0.0);
+string option2=optionArg2.getValue();
 
-cmat Udelta=HamiltonianChainU(J.getValue(),b , qubits.getValue(), deltapert.getValue());
+cmat U, Udelta;
+
+if(option2=="onesite"){
+	
+U=HamiltonianChainU(J.getValue(),b , qubits.getValue(), 0.0);
+
+Udelta=HamiltonianChainU(J.getValue(),b , qubits.getValue(), deltapert.getValue());
+}
+
+if(option2=="bothsites"){
+	
+cmat V=RandomGUE(pow(2, qubits.getValue()));
+
+U=HamiltonianChainUbothSites(J.getValue(),b , qubits.getValue(), deltapert.getValue()*V);
+
+Udelta=HamiltonianChainUbothSites(J.getValue(),b , qubits.getValue(), -1.0*deltapert.getValue()*V);
+}
 
 double theta=0.0, phi=0.0;
 
