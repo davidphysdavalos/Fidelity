@@ -91,6 +91,9 @@ if(option=="klimov2")
 	
 if(option=="klimovmix")
 	state=TensorProduct(TensorProduct(TensorPow(qustate,2),TensorProduct(sigma(1)*qustate,sigma(2)*qustate)),TensorPow(qustate,qubits.getValue()-4));
+	
+if(option=="random")
+	state=RandomState(pow(2,qubits.getValue()));
 
 //cout<< qustate ;
 
