@@ -31,6 +31,8 @@ TCLAP::ValueArg<double> phi("","phi", "azimultal angle",false, 1.0,"double",cmd)
 TCLAP::ValueArg<double> deltabx("","deltabx", "perturbation",false, 0.1,"double",cmd);
 TCLAP::ValueArg<int> steps("","steps","steps",false, 100,"int",cmd);
 TCLAP::ValueArg<double> Jpert("","Jpert","Perturbation on Ising",false, 0.0,"double",cmd);
+TCLAP::ValueArg<double> Jinhompert("","Jinhompert","Inhomogeneous perturbation on Ising on 0-1 interaction",false, 0.0,"double",cmd);
+TCLAP::ValueArg<double> deltabxinhom("","deltabxinhom", "perturbation al campo solo en el qubit 0",false, 0.0,"double",cmd);
 
 
 int main(int argc, char* argv[])
@@ -49,14 +51,18 @@ if (semilla == 0){
 RNG_reset(semilla);
 // }}}
 
-vec b(3), bpert(3), bpertreverse(3); 
+vec b(3), bpert(3), bpertrev(3), binhom(3), binhomrev(3); 
 b(0)=bx.getValue(); 
 b(1)=by.getValue();
 b(2)=bz.getValue();
 bpert=b;
-bpertreverse=b;
+bpertrev=b;
 bpert(0)=b(0)+deltabx.getValue();
-bpertreverse(0)=b(0)-deltabx.getValue();
+bpertrev(0)=b(0)-deltabx.getValue();
+binhom=bpert;
+binhomrev=bpertrev,
+binhom(0)=bpert(0)+deltabxinhom.getValue();
+binhomrev(0)=bpertrev(0)-deltabxinhom.getValue();
 string option=optionArg.getValue();
 string option2=optionArg2.getValue();
 
@@ -101,7 +107,7 @@ if(option=="random")
 
 staterev=state;
 
-double Jp=J.getValue()+Jpert.getValue(), Jprev=J.getValue()-Jpert.getValue();
+double Jrev=J.getValue()+Jpert.getValue();
 
 
 if(option2=="fidelity"){
@@ -119,9 +125,13 @@ cout << list(i) <<endl;
 
 list(i)=sqrt(list(i));
 
-apply_chain(state, Jp, bpert);
+apply_ising_inhom(state, J.getValue()+Jpert.getValue(), J.getValue()+Jinhompert.getValue()+Jpert.getValue());
 
-apply_chain(staterev, Jprev, bpertreverse); 
+apply_magnetic_inhom(state, bpert, binhom);
+
+apply_ising_inhom(staterev, J.getValue()-Jpert.getValue(), J.getValue()-Jinhompert.getValue()-Jpert.getValue());
+
+apply_magnetic_inhom(staterev, bpertrev, binhomrev);
 
 //cout<<abs(dot(conj(staterev),state))<<endl;
 
@@ -150,7 +160,9 @@ cout << real(list(i)) << " " << imag(list(i)) <<endl;
 
 //cout << list <<endl;
 
-apply_chain(state, J.getValue(), b);
+apply_ising_inhom(state, J.getValue(), J.getValue()+Jinhompert.getValue());
+
+apply_magnetic_inhom(state, bpert, binhom);
 }
 }
 if(option2=="fidelityandipr"){
@@ -174,9 +186,13 @@ cout << listfidel(i) <<endl;
 
 listfidel(i)=sqrt(listfidel(i));
 
-apply_chain(state, Jp, bpert);
+apply_ising_inhom(state, J.getValue()+Jpert.getValue(), J.getValue()+Jinhompert.getValue()+Jpert.getValue());
 
-apply_chain(staterev, Jprev, bpertreverse); 
+apply_magnetic_inhom(state, bpert, binhom);
+
+apply_ising_inhom(staterev, J.getValue()-Jpert.getValue(), J.getValue()-Jinhompert.getValue()-Jpert.getValue());
+
+apply_magnetic_inhom(staterev, bpertrev, binhomrev);
 
 //cout<<abs(dot(conj(staterev),state))<<endl;
 
