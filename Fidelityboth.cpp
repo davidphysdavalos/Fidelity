@@ -60,7 +60,7 @@ bpertrev=b;
 bpert(0)=b(0)+deltabx.getValue();
 bpertrev(0)=b(0)-deltabx.getValue();
 binhom=bpert;
-binhomrev=bpertrev,
+binhomrev=bpertrev;
 binhom(0)=bpert(0)+deltabxinhom.getValue();
 binhomrev(0)=bpertrev(0)-deltabxinhom.getValue();
 string option=optionArg.getValue();
@@ -208,5 +208,7 @@ cout<< sum_positive_derivatives(listfidel)<< endl;
 
 cout<< real(mean(listcorr))<< endl;
 }
+
+//cout<<binhom<<" "<<binhomrev<<endl;
 
 }
