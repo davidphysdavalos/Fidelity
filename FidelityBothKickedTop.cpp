@@ -128,13 +128,13 @@ list(i)=sqrt(list(i));
 
 apply_ising_allvsall( state, J.getValue()+Jpert.getValue());
 
-apply_ising_z(state, J.getValue()+Jinhompert.getValue()+Jpert.getValue());
+apply_ising_z(state, Jinhompert.getValue(),0,1);
 
 apply_magnetic_inhom(state, bpert, binhom);
 
 apply_ising_allvsall(staterev, J.getValue()-Jpert.getValue());
 
-apply_ising_z(staterev, J.getValue()-Jinhompert.getValue()-Jpert.getValue());
+apply_ising_z(staterev, -1.0*Jinhompert.getValue(),0,1);
 
 apply_magnetic_inhom(staterev, bpertrev, binhomrev);
 
@@ -171,6 +171,8 @@ apply_magnetic_inhom(state, bpert, binhom);
 }
 }
 if(option2=="fidelityandipr"){
+	
+cvec stateforipr=state;
 
 vec listfidel(steps.getValue());
 
@@ -182,7 +184,7 @@ for(int i=0;i<steps.getValue();i++){
 
 listfidel(i)=pow( abs( dot( conj(staterev),state)),2);
 
-listcorr(i)=pow(abs(dot(conj(init),state)),2);
+listcorr(i)=pow(abs(dot(conj(init),stateforipr)),2);
 
 //cout<< pow( abs( dot( conj(staterev),state)),2) <<endl;
 
@@ -193,15 +195,21 @@ listfidel(i)=sqrt(listfidel(i));
 
 apply_ising_allvsall( state, J.getValue()+Jpert.getValue());
 
-apply_ising_z(state, J.getValue()+Jinhompert.getValue()+Jpert.getValue());
+apply_ising_z(state, Jinhompert.getValue());
 
 apply_magnetic_inhom(state, bpert, binhom);
 
 apply_ising_allvsall(staterev, J.getValue()-Jpert.getValue());
 
-apply_ising_z(staterev, J.getValue()-Jinhompert.getValue()-Jpert.getValue());
+apply_ising_z(staterev, -1.0*Jinhompert.getValue());
 
 apply_magnetic_inhom(staterev, bpertrev, binhomrev);
+
+apply_ising_allvsall(stateforipr, J.getValue()-Jpert.getValue());
+
+apply_ising_z(stateforipr, J.getValue());
+
+apply_magnetic_inhom(stateforipr, b, b);
 
 //cout<<abs(dot(conj(staterev),state))<<endl;
 
