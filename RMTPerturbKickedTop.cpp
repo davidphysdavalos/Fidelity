@@ -96,12 +96,16 @@ cmat HamiltonianChainU(double J, vec b, int Nqubits, double delta){
 	
 	cmat HK=HI;
 	
-	for(int i=0; i<Nqubits-1; i++){
+	for(int Position1 = 0; Position1 < Nqubits-1; Position1++){
 		
-		HI=Isingterm(i,i+1,Nqubits)+HI;
+		for(int Position2 = 1+Position1; Position2 < Nqubits; Position2++){
+			HI= Isingterm(Position1, Position2, Nqubits);
 		}
+	
+
+	}
 		
-		HI=J*HI+J*Isingterm(Nqubits-1,0,Nqubits);
+		HI=J*HI;
 		
 	for(int i=0;i<Nqubits;i++){
 		HK=b(0)*sigmaddress(1,i,Nqubits)+b(2)*sigmaddress(3,i,Nqubits)+HK;
@@ -111,28 +115,22 @@ cmat HamiltonianChainU(double J, vec b, int Nqubits, double delta){
 	
 }
 
-    //~ for (int Position1=0; Position1<qubits-1; Position1++){
-//~ 
-	//~ for(int Position2=1+Position1; Position2<qubits; Position2++){
-	//~ apply_ising_z(state, J, Position1, Position2);
-	//~ }
-
 cmat HamiltonianChainUbothSites(double J, vec b, int Nqubits, cmat V){
 	
 	cmat HI=zeros_c(pow(2,Nqubits),pow(2,Nqubits));
 	
 	cmat HK=HI;
 	
-	for(int Position1=0; Position1<Nqubits-1; Position1++){
+	for(int Position1 = 0; Position1 < Nqubits-1; Position1++){
 		
-		for(int Position2=1+Position1; Position2< Nqubits; Position2++){
-			HI= J*Isingterm(Nqubits, Position1, Position2);
+		for(int Position2 = 1+Position1; Position2 < Nqubits; Position2++){
+			HI= Isingterm(Position1, Position2, Nqubits);
 		}
 	
 
 	}
 		
-		HI=J*HI+J*Isingterm(Nqubits-1,0,Nqubits);
+		HI=J*HI;
 		
 	for(int i=0;i<Nqubits;i++){
 		HK=b(0)*sigmaddress(1,i,Nqubits)+b(2)*sigmaddress(3,i,Nqubits)+HK;
