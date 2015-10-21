@@ -128,7 +128,7 @@ cmat HamiltonianChainUbothSites(double J, vec b, int Nqubits, cmat V){
 		HK=b(0)*sigmaddress(1,i,Nqubits)+b(2)*sigmaddress(3,i,Nqubits)+HK;
 	}
 	
-	return exponentiate_nonsym(-complex <double>(0,1)*(HK+V))*exponentiate_nonsym(-complex <double>(0,1)*HI);
+	return exponentiate_nonsym(-complex <double>(0,1)*HK)*exponentiate_nonsym(-complex <double>(0,1)*(HI+V));
 	
 }
 
