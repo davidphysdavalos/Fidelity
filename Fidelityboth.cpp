@@ -28,7 +28,7 @@ TCLAP::ValueArg<double> by("","by", "Magnetic field in y direction",false, 0.,"d
 TCLAP::ValueArg<double> bz("","bz", "Magnetic field in z direction",false, 1.4,"double",cmd);
 TCLAP::ValueArg<double> theta("","theta", "polar angle",false, 1.0,"double",cmd);
 TCLAP::ValueArg<double> phi("","phi", "azimultal angle",false, 1.0,"double",cmd);
-TCLAP::ValueArg<double> deltabx("","deltabx", "perturbation",false, 0.1,"double",cmd);
+TCLAP::ValueArg<double> deltabx("","deltabx", "perturbation",false, 0.0,"double",cmd);
 TCLAP::ValueArg<int> steps("","steps","steps",false, 100,"int",cmd);
 TCLAP::ValueArg<double> Jpert("","Jpert","Perturbation on Ising",false, 0.0,"double",cmd);
 TCLAP::ValueArg<double> Jinhompert("","Jinhompert","Inhomogeneous perturbation on Ising on 0-1 interaction",false, 0.0,"double",cmd);
