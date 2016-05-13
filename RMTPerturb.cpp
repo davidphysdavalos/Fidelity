@@ -138,6 +138,7 @@ int main(int argc, char* argv[])
 
 TCLAP::CmdLine cmd("No reputas estupidas mames",' ', "0.1");
 TCLAP::ValueArg<string> optionArg("o","option", "Option" ,false,"normalito", "string",cmd);
+TCLAP::ValueArg<string> medida("m","medida", "Medida" ,false,"BLP", "string",cmd);
 TCLAP::ValueArg<string> optionArg2("","option2", "onesite or bothsites Hamiltonian RMT perturbation" ,false,"onesite", "string",cmd);
 TCLAP::ValueArg<unsigned int> seed("s","seed", "Random seed [0 for urandom]",false, 243243,"unsigned int",cmd);
 TCLAP::ValueArg<int> qubits("q","qubits", "number of qubits",false, 4,"int",cmd);
@@ -222,6 +223,7 @@ for(int i=0;i<steps.getValue()+1;i++){
 
 	theta=theta+meshtheta.getValue();
 }
+
 
 //cout<<U<<endl;
 
